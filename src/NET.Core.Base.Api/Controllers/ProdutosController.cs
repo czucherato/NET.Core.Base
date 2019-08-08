@@ -20,8 +20,9 @@ namespace NET.Core.Base.Api.Controllers
             INotificador notificador,
             IProdutoRep produtoRep,
             IProdutoService produtoServ,
-            IMapper mapper) 
-            : base(notificador)
+            IMapper mapper,
+            IUser user) 
+            : base(user, notificador)
         {
             _produtoRep = produtoRep;
             _produtoServ = produtoServ;

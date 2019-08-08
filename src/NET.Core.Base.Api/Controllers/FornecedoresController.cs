@@ -20,8 +20,9 @@ namespace NET.Core.Base.Api.Controllers
             IFornecedorRep fornecedorRep,
             IFornecedorService fornecedorServ,
             IMapper mapper,
-            INotificador notificador)
-            : base(notificador)
+            INotificador notificador,
+            IUser user)
+            : base(user, notificador)
         {
             _enderecoRep = enderecoRep;
             _fornecedorRep = fornecedorRep;

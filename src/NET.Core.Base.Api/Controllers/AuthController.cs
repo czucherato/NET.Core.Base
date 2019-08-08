@@ -15,14 +15,16 @@ using NET.Core.Base.Business.Interfaces;
 namespace NET.Core.Base.Api.Controllers
 {
     [Route("api")]
+    //[DisableCors]
     public class AuthController : MainController
     {
         public AuthController(
             INotificador notificador,
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
-            IOptions<AppSettings> appSettings) 
-            : base(notificador)
+            IOptions<AppSettings> appSettings,
+            IUser user) 
+            : base(user, notificador)
         {
             _appSettings = appSettings.Value;
             _userManager = userManager;

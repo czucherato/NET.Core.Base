@@ -29,8 +29,16 @@ namespace NET.Core.Base.Api
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
-            else app.UseHsts();
+            if (env.IsDevelopment())
+            {
+                app.UseCors("Development");
+                app.UseDeveloperExceptionPage();
+            } 
+            else
+            {
+                app.UseHsts();
+                app.UseCors("Production");
+            }
 
             app.UseAuthentication();
             app.UseMvcConfiguration();

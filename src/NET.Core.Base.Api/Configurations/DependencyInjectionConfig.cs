@@ -1,4 +1,6 @@
-﻿using NET.Core.Base.Data.Context;
+﻿using Microsoft.AspNetCore.Http;
+using NET.Core.Base.Data.Context;
+using NET.Core.Base.Api.Extensions;
 using NET.Core.Base.Data.Repositories;
 using NET.Core.Base.Business.Services;
 using NET.Core.Base.Business.Interfaces;
@@ -13,11 +15,15 @@ namespace NET.Core.Base.Api.Configurations
         {
             services.AddScoped<NetCoreBaseContext>();
             services.AddScoped<INotificador, Notificador>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<IUser, AspNetUser>();
 
             services.AddScoped<IFornecedorService, FornecedorService>();
+            services.AddScoped<IProdutoService, ProdutoService>();
 
             services.AddScoped<IEnderecoRep, EnderecoRep>();
             services.AddScoped<IFornecedorRep, FornecedorRep>();
+            services.AddScoped<IProdutoRep, ProdutoRep>();
 
             return services;
         }

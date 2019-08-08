@@ -4,18 +4,34 @@ using System.Collections.Generic;
 using NET.Core.Base.Business.Interfaces;
 using NET.Core.Base.Business.Notifications;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System;
 
 namespace NET.Core.Base.Api.Controllers
 {
     [ApiController]
     public class MainController : ControllerBase
     {
-        public MainController(INotificador notificador)
+        public MainController(
+            IUser user,
+            INotificador notificador)
         {
+            _user = user;
             _notificador = notificador;
+
+            if (user.IsAuthenticated())
+            {
+                UsuarioId = user.GetUserId();
+                UsuarioAutenticado = true;
+            }
         }
 
         private readonly INotificador _notificador;
+
+        public readonly IUser _user;
+
+        protected Guid UsuarioId { get; set; }
+
+        protected bool UsuarioAutenticado { get; set; }
 
         protected bool OperacaoValida() => !_notificador.TemNotificacao();
 
