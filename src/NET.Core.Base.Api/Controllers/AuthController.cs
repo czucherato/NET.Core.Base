@@ -14,7 +14,9 @@ using NET.Core.Base.Business.Interfaces;
 
 namespace NET.Core.Base.Api.Controllers
 {
-    [Route("api")]
+    [ApiVersion("2.0")]
+    [ApiVersion("1.0", Deprecated = true)]
+    [Route("api/v{version:apiVersion}")]
     //[DisableCors]
     public class AuthController : MainController
     {

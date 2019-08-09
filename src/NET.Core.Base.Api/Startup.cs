@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using NET.Core.Base.Api.Configurations;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace NET.Core.Base.Api
@@ -21,13 +22,17 @@ namespace NET.Core.Base.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.WebApiConfig();
+            services.AddSwaggerConfig();
             services.ResolveDependencies();
             services.AddAutoMapper(typeof(Startup));
             services.AddIdentityConfiguration(Configuration);
             services.AddDbContext<NetCoreBaseContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(
+            IApplicationBuilder app, 
+            IHostingEnvironment env,
+            IApiVersionDescriptionProvider provider)
         {
             if (env.IsDevelopment())
             {
@@ -42,6 +47,7 @@ namespace NET.Core.Base.Api
 
             app.UseAuthentication();
             app.UseMvcConfiguration();
+            app.UseSwaggerConfig(provider);
         }
     }
 }

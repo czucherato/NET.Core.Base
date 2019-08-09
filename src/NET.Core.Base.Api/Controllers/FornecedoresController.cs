@@ -12,7 +12,8 @@ using Microsoft.AspNetCore.Authorization;
 namespace NET.Core.Base.Api.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class FornecedoresController : MainController
     {
         public FornecedoresController(
