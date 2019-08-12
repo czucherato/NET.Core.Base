@@ -1,10 +1,13 @@
 ﻿using System.Linq;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
 
 namespace NET.Core.Base.Api.Configurations
 {
@@ -48,13 +51,26 @@ namespace NET.Core.Base.Api.Configurations
         public static IServiceCollection AddSwaggerConfig(this IServiceCollection services)
         {
             //services.AddSwaggerGen(c => c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" }));
-            services.AddSwaggerGen(c => c.OperationFilter<SwaggerDefaultValues>());
-
+            services.AddSwaggerGen(c => 
+            {
+                c.OperationFilter<SwaggerDefaultValues>();
+                var security = new Dictionary<string, IEnumerable<string>> { { "Bearer", new string[] { } } };
+                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                {
+                    Description = "Insira o token JWT desta maneira: Bearer {seu token}",
+                    Name = "Authorization",
+                    In = "header",
+                    Type = "apiKey"
+                });
+                c.AddSecurityRequirement(security);
+            });
+            
             return services;
         }
 
         public static IApplicationBuilder UseSwaggerConfig(this IApplicationBuilder app, IApiVersionDescriptionProvider provider)
         {
+            //app.UseMiddleware<SwaggerAuthorizeMiddleware>();
             app.UseSwagger();
             //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"));
             app.UseSwaggerUI(
@@ -88,6 +104,28 @@ namespace NET.Core.Base.Api.Configurations
 
                 parameter.Required |= description.IsRequired;
             }
+        }
+    }
+
+    public class SwaggerAuthorizeMiddleware
+    {
+        public SwaggerAuthorizeMiddleware(RequestDelegate next)
+        {
+            _next = next;
+        }
+
+        private readonly RequestDelegate _next;
+
+        public async Task Invoke(HttpContext context)
+        {
+            if (context.Request.Path.StartsWithSegments("/swagger")
+                && !context.User.Identity.IsAuthenticated)
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                return;
+            }
+
+            await _next.Invoke(context);
         }
     }
 }
