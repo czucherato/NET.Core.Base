@@ -2,6 +2,7 @@
 using NET.Core.Base.Data.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using NET.Core.Base.Api.Extensions;
 using Microsoft.EntityFrameworkCore;
 using NET.Core.Base.Api.Configurations;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +28,7 @@ namespace NET.Core.Base.Api
             services.AddAutoMapper(typeof(Startup));
             services.AddIdentityConfiguration(Configuration);
             services.AddDbContext<NetCoreBaseContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddLoggingConfiguration();
         }
 
         public void Configure(
@@ -46,8 +48,10 @@ namespace NET.Core.Base.Api
             }
 
             app.UseAuthentication();
+            app.UseMiddleware<ExceptionMiddleware>();
             app.UseMvcConfiguration();
             app.UseSwaggerConfig(provider);
+            app.UseLoggingConfiguration();
         }
     }
 }

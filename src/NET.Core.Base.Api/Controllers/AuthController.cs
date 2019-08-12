@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NET.Core.Base.Api.Extensions;
 using NET.Core.Base.Api.ViewModels;
@@ -25,17 +26,20 @@ namespace NET.Core.Base.Api.Controllers
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
             IOptions<AppSettings> appSettings,
-            IUser user) 
+            IUser user,
+            ILogger<AuthController> logger) 
             : base(user, notificador)
         {
             _appSettings = appSettings.Value;
             _userManager = userManager;
             _signInManager = signInManager;
+            _logger = logger;
         }
 
         private readonly AppSettings _appSettings;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly ILogger _logger;
 
         [HttpPost("nova-conta")]
         public async Task<ActionResult> Register(RegisterUserViewModel registerUserViewModel)
@@ -70,7 +74,11 @@ namespace NET.Core.Base.Api.Controllers
 
             var result = await _signInManager.PasswordSignInAsync(loginUserViewModel.Email, loginUserViewModel.Password, false, true);
 
-            if (result.Succeeded) return CustomResponse(await GerarJwt(loginUserViewModel.Email));
+            if (result.Succeeded)
+            {
+                _logger.LogInformation("Usuário logado com sucesso");
+                return CustomResponse(await GerarJwt(loginUserViewModel.Email));
+            } 
             if (result.IsLockedOut)
             {
                 NotificarErro("usuário temporariamente bloqueado por tentativas inválidas.");
