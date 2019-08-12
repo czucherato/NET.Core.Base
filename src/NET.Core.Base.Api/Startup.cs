@@ -28,7 +28,7 @@ namespace NET.Core.Base.Api
             services.AddAutoMapper(typeof(Startup));
             services.AddIdentityConfiguration(Configuration);
             services.AddDbContext<NetCoreBaseContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddLoggingConfiguration();
+            services.AddLoggingConfiguration(Configuration);
         }
 
         public void Configure(
