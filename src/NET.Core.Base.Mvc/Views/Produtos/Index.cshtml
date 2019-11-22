@@ -1,0 +1,59 @@
+﻿@model IEnumerable<Mvc.Core.Base.App.ViewModels.ProdutoViewModel>
+
+@{
+    ViewData["Title"] = "Lista de Produtos";
+}
+
+<h1>Index</h1>
+<vc:summary></vc:summary>
+<p>
+    <a class="btn btn-info" asp-action="Create">Create New</a>
+</p>
+<table class="table table-hover">
+    <thead class="thead-light">
+        <tr>
+            <th>
+
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Nome)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Fornecedor)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Valor)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ativo)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                <img src="~/imagens/@item.Imagem" alt="@item.Imagem" style="width: 70px; height: 100px"/>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Fornecedor.Nome)
+            </td>
+            <td>
+                @item.Valor.ToString("C")
+            </td>
+            <td>x
+                @Html.DisplayFor(modelItem => item.Ativo)
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
+                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Excluir</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
